@@ -1,0 +1,9 @@
+# Node.js
+node_modules/
+
+# Android / Kotlin
+*.iml
+.gradle/
+build/
+.idea/
+local.properties
