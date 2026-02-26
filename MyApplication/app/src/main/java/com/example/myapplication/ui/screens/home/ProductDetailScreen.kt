@@ -113,7 +113,7 @@ fun ProductDetailScreen(
 
                     // DESCRIPTION
                     Text(
-                        text = it.description,
+                        text = it.description ?: "No Description Available",
                         fontSize = 14.sp,
                         color = Color.Gray,
                         lineHeight = 20.sp

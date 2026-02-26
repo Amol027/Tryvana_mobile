@@ -10,15 +10,21 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myapplication.viewmodel.AuthViewModel
 import com.example.myapplication.ui.viewmodel.UserViewModel
-import com.example.myapplication.ui.theme.*
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.foundation.text.KeyboardOptions
+
+private val PrimaryTeal = Color(0xFF008080)
+private val BgColor = Color(0xFFF5F7F8)
 
 @Composable
 fun LoginScreen(
     navController: NavHostController,
     authViewModel: AuthViewModel,
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    role: String
 ) {
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -26,19 +32,12 @@ fun LoginScreen(
     val isLoading by authViewModel.isLoading
     val errorMessage by authViewModel.errorMessage
 
+    // ✅ Correct LaunchedEffect
     LaunchedEffect(loginSuccess) {
         if (loginSuccess) {
-
-            // 🔥 SET REAL USER DATA HERE
-            userViewModel.setUser(
-                id = authViewModel.loggedInUserId ?: 0,
-                name = authViewModel.loggedInUserName ?: "Trywana User",
-                email = authViewModel.loggedInUserEmail ?: email
-            )
-
-
-            navController.navigate("home") {
-                popUpTo("login") { inclusive = true }
+            // authViewModel ke andar state already set honi chahiye login function me
+            navController.navigate("main/${role.lowercase()}") {
+                popUpTo("role") { inclusive = true }
             }
         }
     }
@@ -52,7 +51,7 @@ fun LoginScreen(
     ) {
 
         Text(
-            text = "Trywana",
+            text = if (role.lowercase() == "seller") "Seller Login" else "User Login",
             style = MaterialTheme.typography.headlineMedium,
             color = PrimaryTeal
         )
@@ -63,7 +62,12 @@ fun LoginScreen(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next
+            )
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -72,14 +76,22 @@ fun LoginScreen(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done
+            )
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
             onClick = {
-                authViewModel.login(email, password)
+                if (email.isNotBlank() && password.isNotBlank()) {
+                    authViewModel.login(email, password, role.uppercase())
+                }
             },
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = PrimaryTeal)
@@ -102,7 +114,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(10.dp))
 
         TextButton(
-            onClick = { navController.navigate("register") }
+            onClick = { navController.navigate("register/$role") }
         ) {
             Text("Don't have account? Register", color = PrimaryTeal)
         }

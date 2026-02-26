@@ -1,11 +1,10 @@
 package com.example.myapplication.data.model
 
-data class ProductData(
-    val page: Int,
-    val products: List<Product>
+data class SellerProductsResponse(
+    val success: Boolean,
+    val data: ProductsData
 )
 
-data class ProductResponse(
-    val success: Boolean,
-    val data: ProductData
+data class ProductsData(
+    val products: List<Product>
 )

@@ -7,3 +7,8 @@ node_modules/
 build/
 .idea/
 local.properties
+
+# Environment files
+.env
+.env.*
+.DS_Store

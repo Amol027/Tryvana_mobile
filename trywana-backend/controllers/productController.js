@@ -2,9 +2,18 @@ const productModel = require("../models/productModel");
 
 exports.addProduct = async (req, res, next) => {
   try {
+    if (!req.body.title || !req.body.price) {
+      const error = new Error("Title and price are required");
+      error.status = 400;
+      throw error;
+    }
+
+    const imageUrl = req.file ? req.file.path : null;
+
     const product = await productModel.createProduct({
       seller_id: req.user.id,
       ...req.body,
+      image_url: imageUrl
     });
 
     res.status(201).json({
@@ -17,13 +26,17 @@ exports.addProduct = async (req, res, next) => {
   }
 };
 
+
+
 exports.getMyProducts = async (req, res, next) => {
   try {
     const products = await productModel.getSellerProducts(req.user.id);
 
     res.json({
       success: true,
-      data: products,
+      data: {
+        products: products || []  
+      },
     });
   } catch (error) {
     next(error);

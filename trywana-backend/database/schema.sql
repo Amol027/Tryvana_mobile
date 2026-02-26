@@ -8,7 +8,9 @@ CREATE TABLE users (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     phone VARCHAR(20),
-    password TEXT NOT NULL,
+    password TEXT,
+    google_id VARCHAR(255) UNIQUE,
+
     role VARCHAR(20) CHECK (role IN ('USER','SELLER','ADMIN')) DEFAULT 'USER',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

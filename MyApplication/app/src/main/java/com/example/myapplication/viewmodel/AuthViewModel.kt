@@ -2,127 +2,116 @@ package com.example.myapplication.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.data.repository.MainRepository
-import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
+import com.example.myapplication.data.model.*
+import com.example.myapplication.data.repository.MainRepository
+import com.example.myapplication.ui.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class AuthViewModel : ViewModel() {
 
     private val repo = MainRepository()
 
-    // ================= UI STATES =================
-
     var loginSuccess = mutableStateOf(false)
-        private set
-
     var isLoading = mutableStateOf(false)
-        private set
-
     var errorMessage = mutableStateOf<String?>(null)
-        private set
-
-
-    // ================= LOGGED USER DATA =================
 
     var loggedInUserId by mutableStateOf<Int?>(null)
-        private set
-
     var loggedInUserName by mutableStateOf<String?>(null)
-        private set
-
     var loggedInUserEmail by mutableStateOf<String?>(null)
-        private set
-
     var loggedInUserToken by mutableStateOf<String?>(null)
-        private set
 
+    private val _loggedInUserRole = mutableStateOf<String?>(null)
+    val loggedInUserRole: State<String?> get() = _loggedInUserRole
 
-    // ================= LOGIN =================
+    lateinit var userViewModel: UserViewModel
+    fun attachUserViewModel(userVM: UserViewModel) {
+        userViewModel = userVM
+    }
 
-    fun login(email: String, password: String) {
+    fun login(email: String, password: String, role: String) {
         viewModelScope.launch {
+            isLoading.value = true
+            errorMessage.value = null
             try {
-                isLoading.value = true
-                clearError()
-
-                val response = repo.login(email, password)
-
-                if (response.isSuccessful && response.body() != null) {
-
-                    val body = response.body()!!
-
-                    if (body.success) {
-
-                        loggedInUserId = body.data.user.id
-                        loggedInUserName = body.data.user.name
-                        loggedInUserEmail = email   // backend email nahi bhej raha
-                        loggedInUserToken = body.data.token
-
-                        loginSuccess.value = true
-                    } else {
-                        errorMessage.value = "Invalid Credentials"
-                    }
-
-                } else {
-                    errorMessage.value = "Login Failed"
-                }
-
+                val response: Response<LoginResponse> = repo.login(email, password, role)
+                handleLoginResponse(response)
             } catch (e: Exception) {
-                errorMessage.value = e.localizedMessage ?: "Server Error"
+                errorMessage.value = e.localizedMessage
             } finally {
                 isLoading.value = false
             }
         }
     }
 
-
-    // ================= REGISTER (AUTO LOGIN ENABLED) =================
-
-    fun register(name: String, email: String, phone: String, password: String) {
+    fun register(name: String, email: String, phone: String, password: String, role: String) {
         viewModelScope.launch {
+            isLoading.value = true
+            errorMessage.value = null
             try {
-                isLoading.value = true
-                clearError()
-
-                val response = repo.register(name, email, phone, password)
-
-                if (response.isSuccessful) {
-
-                    // 🔥 AUTO LOGIN AFTER REGISTER
-                    login(email, password)
-
-                } else {
-                    errorMessage.value =
-                        response.errorBody()?.string() ?: "Register Failed"
-                }
-
+                val response: Response<RegisterResponse> = repo.register(name, email, phone, password, role)
+                handleRegisterResponse(response)
             } catch (e: Exception) {
-                errorMessage.value = e.localizedMessage ?: "Server Error"
+                errorMessage.value = e.localizedMessage
             } finally {
                 isLoading.value = false
             }
         }
     }
 
+    private fun handleLoginResponse(response: Response<LoginResponse>) {
+        if (response.isSuccessful) {
+            val data = response.body()?.data
+            val user = data?.user
 
-    // ================= LOGOUT =================
+            loggedInUserId = user?.id
+            loggedInUserName = user?.name
+            loggedInUserEmail = user?.email
+            loggedInUserToken = data?.token
+            _loggedInUserRole.value = user?.role
+
+            if (this@AuthViewModel::userViewModel.isInitialized && user != null) {
+                userViewModel.setUser(user.id, user.name, user.email)
+            }
+
+            loginSuccess.value = true
+        } else {
+            errorMessage.value = "Login Failed: ${response.message()}"
+        }
+    }
+
+    private fun handleRegisterResponse(response: Response<RegisterResponse>) {
+        if (response.isSuccessful) {
+            val data = response.body()?.data
+            val user = data?.user
+
+            loggedInUserId = user?.id
+            loggedInUserName = user?.name
+            loggedInUserEmail = user?.email
+            loggedInUserToken = data?.token
+            _loggedInUserRole.value = user?.role
+
+            if (this@AuthViewModel::userViewModel.isInitialized && user != null) {
+                userViewModel.setUser(user.id, user.name, user.email)
+            }
+
+            loginSuccess.value = true
+        } else {
+            errorMessage.value = "Register Failed: ${response.message()}"
+        }
+    }
 
     fun logout() {
-
         loginSuccess.value = false
-
         loggedInUserId = null
         loggedInUserName = null
         loggedInUserEmail = null
         loggedInUserToken = null
+        _loggedInUserRole.value = null
 
-        clearError()
-    }
-
-
-    // ================= HELPERS =================
-
-    private fun clearError() {
-        errorMessage.value = null
+        if (this@AuthViewModel::userViewModel.isInitialized) {
+            userViewModel.clearUser()
+        }
     }
 }

@@ -4,9 +4,20 @@ const router = express.Router();
 const productController = require("../controllers/productController");
 const { verifyToken } = require("../middleware/authMiddleware");
 const { checkRole } = require("../middleware/roleMiddleware");
+const upload = require("../middleware/uploadMiddleware");
+
+
 
 // Seller Routes
-router.post("/add", verifyToken, checkRole(["SELLER"]), productController.addProduct);
+router.post(
+  "/add",
+  verifyToken,
+  checkRole(["SELLER"]),
+  upload.single("image"),
+  productController.addProduct
+);
+
+// router.post("/add", verifyToken, checkRole(["SELLER"]), productController.addProduct);
 
 router.get("/my", verifyToken, checkRole(["SELLER"]), productController.getMyProducts);
 

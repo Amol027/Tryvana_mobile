@@ -2,10 +2,11 @@ package com.example.myapplication.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.data.model.Product
 import com.example.myapplication.data.repository.MainRepository
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
+import com.example.myapplication.data.model.Product
+
 
 class MainViewModel : ViewModel() {
 
@@ -21,8 +22,7 @@ class MainViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 isLoading = true
-                // ✅ Direct assignment, no isSuccessful/body()
-                products = repo.getProducts()
+                products = repo.getAllProducts()
             } catch (e: Exception) {
                 e.printStackTrace()
                 products = emptyList()
@@ -32,4 +32,5 @@ class MainViewModel : ViewModel() {
         }
     }
 }
+
 

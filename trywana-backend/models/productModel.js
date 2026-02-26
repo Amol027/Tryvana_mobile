@@ -1,35 +1,3 @@
-// const pool = require("../config/db");
-
-// exports.createProduct = async (
-//   seller_id,
-//   title,
-//   description,
-//   price,
-//   stock,
-//   category,
-//   image_url
-// ) => {
-//   const result = await pool.query(
-//     `INSERT INTO products 
-//      (seller_id, title, description, price, stock, category, image_url)
-//      VALUES ($1,$2,$3,$4,$5,$6,$7)
-//      RETURNING *`,
-//     [seller_id, title, description, price, stock, category, image_url]
-//   );
-
-//   return result.rows[0];
-// };
-
-// exports.getAllProducts = async () => {
-//   const result = await pool.query(
-//     `SELECT products.*, users.name AS seller_name
-//      FROM products
-//      JOIN users ON products.seller_id = users.id
-//      ORDER BY products.created_at DESC`
-//   );
-
-//   return result.rows;
-// };
 
 
 const pool = require("../config/db");

@@ -1,23 +1,31 @@
 package com.example.myapplication.data.repository
 
+import android.content.Context
+import android.net.Uri
 import com.example.myapplication.data.model.*
 import com.example.myapplication.data.network.RetrofitClient
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 class MainRepository {
 
-    suspend fun login(email: String, password: String) =
-        RetrofitClient.api.login(LoginRequest(email, password))
+    private val api = RetrofitClient.api
 
-    suspend fun register(
-        name: String,
-        email: String,
-        phone: String,
-        password: String
-    ) =
-        RetrofitClient.api.register(RegisterRequest(name, email, phone, password))
+    suspend fun login(email: String, password: String, role: String) =
+        api.login(LoginRequest(email, password, role))
 
-    suspend fun getProducts(): List<Product> {
-        val response = RetrofitClient.api.getAllProducts()
+    suspend fun register(name: String, email: String, phone: String, password: String, role: String) =
+        api.register(RegisterRequest(name, email, phone, password, role))
+
+    suspend fun getMyProducts(token: String): SellerProductsResponse {
+        return api.getMyProducts("Bearer $token")
+    }
+
+    suspend fun getAllProducts(page: Int = 1, search: String = ""): List<Product> {
+        val response = api.getAllProducts(page, search)
         return if (response.success) {
             response.data.products
         } else {
@@ -25,4 +33,39 @@ class MainRepository {
         }
     }
 
+    suspend fun addProduct(
+        context: Context,
+        token: String,
+        title: String,
+        description: String,
+        price: Double,
+        stock: Int,
+        category: String,
+        imageUri: Uri?
+    ): Boolean {
+        val titleBody = title.toRequestBody("text/plain".toMediaTypeOrNull())
+        val descBody = description.toRequestBody("text/plain".toMediaTypeOrNull())
+        val priceBody = price.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val stockBody = stock.toString().toRequestBody("text/plain".toMediaTypeOrNull())
+        val categoryBody = category.toRequestBody("text/plain".toMediaTypeOrNull())
+
+        var imagePart: MultipartBody.Part? = null
+        if (imageUri != null) {
+            val file = File(imageUri.path!!)
+            val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+            imagePart = MultipartBody.Part.createFormData("image", file.name, requestFile)
+        }
+
+        val response = api.addProduct(
+            "Bearer $token",
+            titleBody,
+            descBody,
+            priceBody,
+            stockBody,
+            categoryBody,
+            imagePart
+        )
+
+        return response.isSuccessful
+    }
 }

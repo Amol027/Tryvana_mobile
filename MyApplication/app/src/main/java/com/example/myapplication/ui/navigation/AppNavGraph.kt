@@ -1,19 +1,20 @@
 package com.example.myapplication.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.myapplication.ui.screens.auth.LoginScreen
-import com.example.myapplication.ui.screens.auth.RegisterScreen
-import com.example.myapplication.ui.screens.home.*
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+
+import com.example.myapplication.ui.screens.auth.*
+import com.example.myapplication.ui.screens.product.ProductDetailScreen
+import com.example.myapplication.ui.screens.product.AddProductScreen
 import com.example.myapplication.viewmodel.AuthViewModel
 import com.example.myapplication.viewmodel.ProductViewModel
 import com.example.myapplication.ui.viewmodel.UserViewModel
-import androidx.navigation.navArgument
-import androidx.navigation.NavType
-import com.example.myapplication.ui.screens.product.ProductDetailScreen
 
 
 @Composable
@@ -23,55 +24,68 @@ fun AppNavGraph(navController: NavHostController) {
     val userViewModel: UserViewModel = viewModel()
     val productViewModel: ProductViewModel = viewModel()
 
-    NavHost(
-        navController = navController,
-        startDestination = "login"
-    ) {
+    // ✅ Attach UserViewModel
+    LaunchedEffect(Unit) {
+        authViewModel.attachUserViewModel(userViewModel)
+    }
 
-        composable("login") {
+    NavHost(navController, startDestination = "role") {
+
+        composable("role") {
+            RoleSelectionScreen(navController)
+        }
+
+        composable(
+            route = "login/{role}",
+            arguments = listOf(navArgument("role") { type = NavType.StringType })
+        ) { backStackEntry ->
+
+            val role = backStackEntry.arguments?.getString("role") ?: "user"
+
             LoginScreen(
                 navController = navController,
                 authViewModel = authViewModel,
-                userViewModel = userViewModel
+                userViewModel = userViewModel,
+                role = role
             )
         }
 
-        composable("register") {
+        composable(
+            route = "register/{role}",
+            arguments = listOf(navArgument("role") { type = NavType.StringType })
+        ) { backStackEntry ->
+
+            val role = backStackEntry.arguments?.getString("role") ?: "user"
+
             RegisterScreen(
                 navController = navController,
-                authViewModel = authViewModel
+                authViewModel = authViewModel,
+                role = role
             )
         }
 
-        composable("home") {
-            HomeScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                productViewModel = productViewModel
+        composable(
+            route = "main/{role}",
+            arguments = listOf(navArgument("role") { type = NavType.StringType })
+        ) { backStackEntry ->
+
+            val role = backStackEntry.arguments?.getString("role") ?: "user"
+
+            MainScreen(
+                rootNavController = navController,
+                productViewModel = productViewModel,
+                authViewModel = authViewModel,
+                role = role
             )
         }
 
-        // ✅ FIXED HERE
-        composable("profile") {
-            ProfileScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                authViewModel = authViewModel
-            )
-        }
-
-        composable("categories") {
-            CategoriesScreen()
-        }
-
-        composable("orders") {
-            OrdersScreen(navController)
-        }
         composable(
             route = "detail/{productId}",
             arguments = listOf(navArgument("productId") { type = NavType.IntType })
         ) { backStackEntry ->
+
             val productId = backStackEntry.arguments?.getInt("productId") ?: 0
+
             ProductDetailScreen(
                 navController = navController,
                 productViewModel = productViewModel,
@@ -79,5 +93,13 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
+        composable("add_product") {
+            AddProductScreen(
+                navController = navController,
+                productViewModel = productViewModel,
+                authViewModel = authViewModel
+            )
+        }
     }
 }
+

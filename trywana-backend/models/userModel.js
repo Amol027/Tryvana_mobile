@@ -16,3 +16,14 @@ exports.findUserByEmail = async (email) => {
   );
   return result.rows[0];
 };
+exports.createGoogleUser = async (name, email, googleId, role) => {
+  const query = `
+    INSERT INTO users (name, email, google_id, role)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *;
+  `;
+
+  const values = [name, email, googleId, role];
+  const result = await pool.query(query, values);
+  return result.rows[0];
+};

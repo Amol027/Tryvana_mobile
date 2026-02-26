@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+require("dotenv").config();
+
 
 const authRoutes = require("./routes/authRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
@@ -25,6 +27,9 @@ app.use("/api/orders", orderRoutes);
 app.get("/", (req, res) => {
   res.send("Trywana Backend Running");
 });
+
+console.log(process.env.CLOUD_NAME);
+
 
 // Global error handler (ALWAYS LAST)
 app.use(errorHandler);

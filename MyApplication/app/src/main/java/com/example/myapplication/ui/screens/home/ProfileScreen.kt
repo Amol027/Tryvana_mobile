@@ -5,26 +5,30 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.myapplication.ui.theme.*
-import com.example.myapplication.ui.viewmodel.UserViewModel
+import android.util.Log
 import com.example.myapplication.viewmodel.AuthViewModel
+import com.example.myapplication.ui.theme.BgColor
+import com.example.myapplication.ui.theme.PrimaryTeal
+import com.example.myapplication.ui.theme.TextDark
+import com.example.myapplication.ui.theme.TextLight
 
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
-    userViewModel: UserViewModel,
     authViewModel: AuthViewModel
 ) {
 
-    val name = userViewModel.userName
-    val email = userViewModel.userEmail
+    val name = authViewModel.loggedInUserName ?: "Guest User"
+    val email = authViewModel.loggedInUserEmail ?: "guest@trywana.com"
+
+    Log.d("ProfileDebug", "ProfileScreen loaded - Name: $name, Email: $email")
 
     Column(
         modifier = Modifier
@@ -69,12 +73,17 @@ fun ProfileScreen(
 
             Text(
                 text = name,
-                fontWeight = FontWeight.SemiBold
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 18.sp,
+                color = TextDark
             )
+
+            Spacer(modifier = Modifier.height(4.dp))
 
             Text(
                 text = email,
-                color = TextLight
+                color = TextLight,
+                fontSize = 14.sp
             )
         }
 
@@ -106,7 +115,9 @@ fun ProfileScreen(
             }
         }
 
-        // ===== Logout Card =====
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // ===== Logout =====
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -115,16 +126,10 @@ fun ProfileScreen(
         ) {
             TextButton(
                 onClick = {
-
-                    // ✅ Proper logout
                     authViewModel.logout()
-                    userViewModel.clearUser()
 
-                    // ✅ Navigate to Login & clear full backstack
-                    navController.navigate("login") {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
-                        }
+                    navController.navigate("role") {
+                        popUpTo(0) { inclusive = true }
                         launchSingleTop = true
                     }
                 },
