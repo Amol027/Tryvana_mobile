@@ -8,6 +8,9 @@ import com.example.myapplication.data.repository.MainRepository
 import com.example.myapplication.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
+import okio.IOException
+
+
 
 class AuthViewModel : ViewModel() {
 
@@ -82,7 +85,7 @@ class AuthViewModel : ViewModel() {
     }
 
     private fun handleRegisterResponse(response: Response<RegisterResponse>) {
-        if (response.isSuccessful) {
+        if (response.isSuccessful && response.body()?.success == true) {
             val data = response.body()?.data
             val user = data?.user
 
@@ -92,15 +95,25 @@ class AuthViewModel : ViewModel() {
             loggedInUserToken = data?.token
             _loggedInUserRole.value = user?.role
 
+            // ✅ UserViewModel update immediately after registration
             if (this@AuthViewModel::userViewModel.isInitialized && user != null) {
                 userViewModel.setUser(user.id, user.name, user.email)
             }
 
             loginSuccess.value = true
         } else {
-            errorMessage.value = "Register Failed: ${response.message()}"
+            val msg = try {
+                response.body()?.message ?: response.errorBody()?.string() ?: "Register Failed"
+            } catch (e: IOException) {
+                "Register Failed"
+            }
+            errorMessage.value = msg
+            loginSuccess.value = false
         }
     }
+
+
+
 
     fun logout() {
         loginSuccess.value = false

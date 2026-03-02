@@ -41,6 +41,8 @@ fun RegisterScreen(
         }
     }
 
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -154,3 +156,5 @@ fun RegisterScreen(
         }
     }
 }
+
+
