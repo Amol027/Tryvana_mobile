@@ -18,6 +18,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +33,8 @@ fun SellerHomeScreen(
     val role by authViewModel.loggedInUserRole
 
     val products = productViewModel.products
-    val isLoading = productViewModel.isLoading
+    val isLoading by productViewModel.isLoading.collectAsState()
+
 
     // ✅ Refresh every time screen recomposes after coming back
     LaunchedEffect(Unit) {

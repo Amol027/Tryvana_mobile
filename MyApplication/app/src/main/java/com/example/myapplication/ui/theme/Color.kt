@@ -13,6 +13,6 @@ val Pink40 = Color(0xFF7D5260)
 // 🔥 Trywana HTML Colors
 val PrimaryTeal = Color(0xFF008080)
 val AccentCoral = Color(0xFFFF6F61)
-val BgColor = Color(0xFFF5F7F8)
+val BgColor = Color(0xFFE8FFF3)
 val TextDark = Color(0xFF333333)
 val TextLight = Color(0xFF888888)

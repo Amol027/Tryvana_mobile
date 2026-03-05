@@ -29,13 +29,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Mic
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.example.myapplication.R
+
+
 
 
 
 
 private val Primary = Color(0xFF008080)
 private val Accent = Color(0xFFFF6F61)
-private val Bg = Color(0xFFF5F7F8)
+private val Bg = Color(0xFFE8FFF3)
+
+
 
 
 
@@ -73,14 +81,27 @@ fun HomeContent(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Trywana",
-                        color = Color.White,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold
-                    )
 
-                    // 🔥 SHOW ADD BUTTON ONLY FOR SELLER
+                    // 🔥 Logo + App Name
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+
+                        Image(
+                            painter = painterResource(id = R.drawable.trywana_logo),
+                            contentDescription = "Trywana Logo",
+                            modifier = Modifier.size(36.dp)
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        Text(
+                            text = "Trywana",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    // 🔥 Right Side Button
                     if (showAddButton) {
                         IconButton(
                             onClick = {
@@ -97,6 +118,7 @@ fun HomeContent(
                         Text("❤️", fontSize = 20.sp)
                     }
                 }
+
 
                 Spacer(modifier = Modifier.height(14.dp))
 
@@ -300,7 +322,8 @@ fun HomeContent(
 
                                             Button(
                                                 onClick = {
-                                                    navController.navigate("product_detail/${product.id}")
+                                                    navController.navigate("detail/${product.id}")
+
                                                 },
                                                 modifier = Modifier.fillMaxWidth(),
                                                 shape = RoundedCornerShape(8.dp),

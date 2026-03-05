@@ -6,11 +6,13 @@ import com.example.myapplication.data.repository.MainRepository
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
 import com.example.myapplication.data.model.Product
+import android.content.Context
+import android.app.Application
 
 
-class MainViewModel : ViewModel() {
+class MainViewModel (application: Application) : ViewModel() {
 
-    private val repo = MainRepository()
+    private val repo = MainRepository(application)
 
     var products by mutableStateOf<List<Product>>(emptyList())
         private set

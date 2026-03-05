@@ -1,25 +1,25 @@
 const orderModel = require("../models/orderModel");
 
-exports.placeOrder = async (req, res, next) => {
-  try {
-    const user_id = req.user.id;
-    const { product_id, quantity } = req.body;
+// exports.placeOrder = async (req, res, next) => {
+//   try {
+//     const user_id = req.user.id;
+//     const { product_id, quantity } = req.body;
 
-    const order = await orderModel.createOrder(
-      user_id,
-      product_id,
-      quantity
-    );
+//     const order = await orderModel.createOrder(
+//       user_id,
+//       product_id,
+//       quantity
+//     );
 
-    res.status(201).json({
-      success: true,
-      message: "Order placed successfully",
-      data: order,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+//     res.status(201).json({
+//       success: true,
+//       message: "Order placed successfully",
+//       data: order,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 exports.getMyOrders = async (req, res, next) => {
   try {
@@ -68,5 +68,22 @@ exports.updateOrderStatus = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+
+exports.buyCart = async (req, res, next) => {
+  try {
+    console.log("🛒 Buy Cart initiated for user:", req.user.id);
+    const order = await orderModel.createOrderFromCart(req.user.id);
+
+    res.status(201).json({
+      success: true,
+      message: "Order placed successfully",
+      data: order
+    });
+
+  } catch (err) {
+    next(err);
   }
 };

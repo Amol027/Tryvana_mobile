@@ -5,7 +5,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
-
+import com.example.myapplication.data.model.AddToCartRequest
 interface ApiService {
 
     /* ================= AUTH ================= */
@@ -49,4 +49,31 @@ interface ApiService {
         @Query("page") page: Int = 1,
         @Query("search") search: String = ""
     ): SellerProductsResponse
+
+    /* ================= CART ================= */
+    @POST("api/cart")
+    suspend fun addToCart(
+        @Header("Authorization") token: String,
+        @Body body: AddToCartRequest
+    ): ApiResponse<Unit>
+    @POST("api/orders/cart")
+    suspend fun buyCart(
+        @Header("Authorization") token: String,
+        @Body body: Map<String, String> = emptyMap() // 👈 Khali JSON {} bhejne ke liye
+    ): ApiResponse<Unit>
+
+    @GET("api/cart")
+    suspend fun getCart(
+        @Header("Authorization") token: String
+    ): CartResponse
+
+
+    @DELETE("api/cart/{productId}")
+    suspend fun removeFromCart(
+        @Header("Authorization") token: String,
+        @Path("productId") productId: Int
+    ): ApiResponse<Unit>
+
+
+
 }

@@ -8,22 +8,37 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import androidx.compose.material3.Text
+
 
 import com.example.myapplication.ui.screens.auth.*
 import com.example.myapplication.ui.screens.product.ProductDetailScreen
 import com.example.myapplication.ui.screens.product.AddProductScreen
+import com.example.myapplication.ui.screens.product.CartScreen
 import com.example.myapplication.viewmodel.AuthViewModel
 import com.example.myapplication.viewmodel.ProductViewModel
 import com.example.myapplication.ui.viewmodel.UserViewModel
+import android.app.Application
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.ViewModelProvider
 
 
 @Composable
 fun AppNavGraph(navController: NavHostController) {
 
-    val authViewModel: AuthViewModel = viewModel()
-    val userViewModel: UserViewModel = viewModel()
-    val productViewModel: ProductViewModel = viewModel()
+    val context = LocalContext.current
+    val application = context.applicationContext as Application
 
+    val authViewModel: AuthViewModel = viewModel(
+        factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+    )
+
+    val productViewModel: ProductViewModel = viewModel(
+        factory = ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+    )
+
+    val userViewModel: UserViewModel = viewModel()
     // ✅ Attach UserViewModel
     LaunchedEffect(Unit) {
         authViewModel.attachUserViewModel(userViewModel)
@@ -100,6 +115,15 @@ fun AppNavGraph(navController: NavHostController) {
                 authViewModel = authViewModel
             )
         }
+
+        composable("orders") {
+            Text("Orders Screen")
+        }
+        composable("cart") {
+            CartScreen(navController, productViewModel)
+        }
+
+
     }
 }
 

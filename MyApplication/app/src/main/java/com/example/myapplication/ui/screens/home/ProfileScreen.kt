@@ -19,11 +19,14 @@ import com.example.myapplication.ui.theme.PrimaryTeal
 import com.example.myapplication.ui.theme.TextDark
 import com.example.myapplication.ui.theme.TextLight
 
+
+
 @Composable
 fun ProfileScreen(
     navController: NavHostController,
     authViewModel: AuthViewModel
 ) {
+
 
     val name = authViewModel.loggedInUserName ?: "Guest User"
     val email = authViewModel.loggedInUserEmail ?: "guest@trywana.com"

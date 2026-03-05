@@ -1,7 +1,10 @@
 -- Drop tables if exist (safe re-run)
+DROP TABLE IF EXISTS order_items CASCADE;
+DROP TABLE IF EXISTS cart CASCADE;
 DROP TABLE IF EXISTS orders CASCADE;
 DROP TABLE IF EXISTS products CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -26,15 +29,31 @@ CREATE TABLE products (
     image_url TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE TABLE orders (
+CREATE TABLE cart (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
     quantity INTEGER NOT NULL CHECK (quantity > 0),
-    total_price NUMERIC(10,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, product_id)
+);
+
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    total_price NUMERIC(10,2) NOT NULL DEFAULT 0,
     status VARCHAR(20)
         CHECK (status IN ('PENDING','CONFIRMED','SHIPPED','DELIVERED'))
         DEFAULT 'PENDING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+    product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    price NUMERIC(10,2) NOT NULL
 );

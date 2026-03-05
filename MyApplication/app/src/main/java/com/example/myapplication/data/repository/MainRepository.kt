@@ -9,10 +9,11 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import  com.example.myapplication.data.network.TokenManager
+class MainRepository (val context: Context) {
 
-class MainRepository {
-
-    private val api = RetrofitClient.api
+    private val tokenManager = TokenManager(context)
+    val api = RetrofitClient.getApi(tokenManager)
 
     suspend fun login(email: String, password: String, role: String) =
         api.login(LoginRequest(email, password, role))

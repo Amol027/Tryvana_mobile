@@ -9,12 +9,16 @@ import com.example.myapplication.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import okio.IOException
+import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import com.example.myapplication.data.network.TokenManager
 
 
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel (application: Application) : AndroidViewModel(application) {
 
-    private val repo = MainRepository()
+    private val repo = MainRepository(application)
 
     var loginSuccess = mutableStateOf(false)
     var isLoading = mutableStateOf(false)
@@ -33,7 +37,7 @@ class AuthViewModel : ViewModel() {
         userViewModel = userVM
     }
 
-    fun login(email: String, password: String, role: String) {
+    fun login(email : String, password: String, role: String) {
         viewModelScope.launch {
             isLoading.value = true
             errorMessage.value = null
@@ -65,24 +69,34 @@ class AuthViewModel : ViewModel() {
 
     private fun handleLoginResponse(response: Response<LoginResponse>) {
         if (response.isSuccessful) {
+
             val data = response.body()?.data
             val user = data?.user
+            val token = data?.token
 
             loggedInUserId = user?.id
             loggedInUserName = user?.name
             loggedInUserEmail = user?.email
-            loggedInUserToken = data?.token
+            loggedInUserToken = token
             _loggedInUserRole.value = user?.role
+
+            // ✅ TOKEN SAVE IN SHARED PREFERENCES
+            if (token != null) {
+                val tokenManager = TokenManager(getApplication())
+                tokenManager.saveToken(token)
+            }
 
             if (this@AuthViewModel::userViewModel.isInitialized && user != null) {
                 userViewModel.setUser(user.id, user.name, user.email)
             }
 
             loginSuccess.value = true
+
         } else {
             errorMessage.value = "Login Failed: ${response.message()}"
         }
     }
+
 
     private fun handleRegisterResponse(response: Response<RegisterResponse>) {
         if (response.isSuccessful && response.body()?.success == true) {

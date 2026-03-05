@@ -5,12 +5,12 @@ const { verifyToken } = require("../middleware/authMiddleware");
 const { checkRole } = require("../middleware/roleMiddleware");
 
 // User place order
-router.post(
-  "/place",
-  verifyToken,
-  checkRole(["USER"]),
-  orderController.placeOrder
-);
+// router.post(
+//   "/place",
+//   verifyToken,
+//   checkRole(["USER"]),
+//   orderController.placeOrder
+// );
 
 // User orders
 router.get(
@@ -35,6 +35,13 @@ router.put(
   checkRole(["SELLER"]),
   orderController.updateOrderStatus
 );
+router.post(
+  "/cart",
+  verifyToken,
+  checkRole(["USER"]),
+  orderController.buyCart
+);
+
 
 
 module.exports = router;

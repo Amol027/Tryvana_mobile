@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 fun RoleSelectionScreen(navController: NavHostController) {
 
     val PrimaryTeal = Color(0xFF008080)
-    val BgColor = Color(0xFFF5F7F8)
+    val BgColor = Color(0xFFE8FFF3)
 
     Box(
         modifier = Modifier
