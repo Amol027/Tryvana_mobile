@@ -8,24 +8,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 
-val Poppins = FontFamily(
-    Font(R.font.poppins_regular, FontWeight.Normal),
-    Font(R.font.poppins_medium, FontWeight.Medium),
-    Font(R.font.poppins_bold, FontWeight.Bold)
+val Roboto = FontFamily(
+    Font(R.font.roboto_regular, FontWeight.Normal),
+    Font(R.font.roboto_medium, FontWeight.Medium),
+    Font(R.font.roboto_bold, FontWeight.Bold)
 )
 
 val Typography = Typography(
+
     bodyLarge = TextStyle(
-        fontFamily = Poppins,
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     ),
-    titleLarge = TextStyle(
-        fontFamily = Poppins,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold
+
+    titleMedium = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp
     ),
-    bodyMedium = TextStyle(
-        fontFamily = Poppins,
+
+    labelLarge = TextStyle(
+        fontFamily = Roboto,
+        fontWeight = FontWeight.Medium,
         fontSize = 14.sp
     )
 )

@@ -22,6 +22,10 @@ import android.app.Application
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.ViewModelProvider
+import  com.example.myapplication.ui.screens.home.CategoriesScreen
+import  com.example.myapplication.ui.screens.home.OrdersScreen
+import  com.example.myapplication.ui.screens.home.ProfileScreen
+
 
 
 @Composable
@@ -116,12 +120,26 @@ fun AppNavGraph(navController: NavHostController) {
             )
         }
 
-        composable("orders") {
-            Text("Orders Screen")
-        }
+
+
+
         composable("cart") {
             CartScreen(navController, productViewModel)
         }
+
+//        composable("categories") {
+//            CategoriesScreen(navController)
+//        }
+//
+//        composable("orders") {
+//            OrdersScreen(navController)
+//        }
+//
+//        composable("profile") {
+//            ProfileScreen(navController, authViewModel)
+//        }
+
+
 
 
     }

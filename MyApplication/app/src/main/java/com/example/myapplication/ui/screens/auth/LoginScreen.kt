@@ -35,7 +35,6 @@ fun LoginScreen(
     // ✅ Correct LaunchedEffect
     LaunchedEffect(loginSuccess) {
         if (loginSuccess) {
-            // authViewModel ke andar state already set honi chahiye login function me
             navController.navigate("main/${role.lowercase()}") {
                 popUpTo("role") { inclusive = true }
             }

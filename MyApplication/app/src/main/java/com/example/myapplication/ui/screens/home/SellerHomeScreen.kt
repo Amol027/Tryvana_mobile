@@ -62,7 +62,7 @@ fun SellerHomeScreen(
 
         bottomBar = {
             BottomBar(
-                navController = navController,
+                bottomNavController = navController,
                 currentRoute = "sellerHome",
                 role = role?.uppercase() ?: ""
             )

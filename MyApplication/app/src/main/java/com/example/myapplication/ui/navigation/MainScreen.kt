@@ -1,19 +1,19 @@
 package com.example.myapplication.ui.navigation
 
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.*
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.*
 import com.example.myapplication.ui.components.BottomBar
-import com.example.myapplication.ui.screens.home.HomeContent
-import com.example.myapplication.ui.screens.home.ProfileScreen
-import com.example.myapplication.ui.screens.home.OrdersScreen
 import com.example.myapplication.ui.screens.home.CategoriesScreen
-import com.example.myapplication.viewmodel.ProductViewModel
-import com.example.myapplication.viewmodel.AuthViewModel
+import com.example.myapplication.ui.screens.home.HomeContent
+import com.example.myapplication.ui.screens.home.OrdersScreen
+import com.example.myapplication.ui.screens.home.ProfileScreen
 import com.example.myapplication.ui.screens.product.AddProductScreen
+import com.example.myapplication.viewmodel.AuthViewModel
+import com.example.myapplication.viewmodel.ProductViewModel
 
 @Composable
 fun MainScreen(
@@ -24,26 +24,41 @@ fun MainScreen(
 ) {
 
     val bottomNavController = rememberNavController()
+
     val navBackStackEntry by bottomNavController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: ""
 
     val token = authViewModel.loggedInUserToken ?: ""
 
     Scaffold(
+
         bottomBar = {
+
             BottomBar(
-                navController = bottomNavController,
+                bottomNavController = bottomNavController,
                 currentRoute = currentRoute,
                 role = role
             )
+
         }
+
     ) { paddingValues ->
 
         NavHost(
+
             navController = bottomNavController,
-            startDestination = if (role == "seller") "seller_home" else "user_home",
+
+            startDestination =
+                if (role.lowercase() == "seller")
+                    "seller_home"
+                else
+                    "user_home",
+
             modifier = Modifier.padding(paddingValues)
+
         ) {
+
+            // ================= USER HOME =================
 
             composable("user_home") {
 
@@ -52,49 +67,64 @@ fun MainScreen(
                 }
 
                 HomeContent(
-                    navController = rootNavController,
-                    products = productViewModel.products,
-                    showAddButton = false
+                    rootNavController = rootNavController,
+                    productViewModel = productViewModel
                 )
             }
+
+            // ================= SELLER HOME =================
 
             composable("seller_home") {
 
                 LaunchedEffect(token) {
                     if (token.isNotEmpty()) {
-                        productViewModel.loadSellerProducts(token)  // ab token correct hai
+                        productViewModel.loadSellerProducts(token)
                     }
                 }
 
-
                 HomeContent(
-                    navController = rootNavController,
-                    products = productViewModel.products,
-                    showAddButton = true
+                    rootNavController = rootNavController,
+                    productViewModel = productViewModel
                 )
             }
 
+            // ================= PROFILE =================
+
             composable("profile") {
+
                 ProfileScreen(
                     navController = rootNavController,
                     authViewModel = authViewModel
                 )
+
             }
 
+            // ================= CATEGORIES =================
+
             composable("categories") {
-                CategoriesScreen()
+
+                CategoriesScreen(bottomNavController)
+
             }
-            composable("add_Product") {
+
+            // ================= ADD PRODUCT =================
+
+            composable("add_product") {
+
                 AddProductScreen(
                     navController = rootNavController,
                     productViewModel = productViewModel,
                     authViewModel = authViewModel
                 )
+
             }
 
+            // ================= ORDERS =================
 
             composable("orders") {
+
                 OrdersScreen(rootNavController)
+
             }
         }
     }

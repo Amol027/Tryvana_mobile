@@ -18,58 +18,71 @@ import com.example.myapplication.ui.theme.*
 import com.example.myapplication.viewmodel.AuthViewModel
 import com.example.myapplication.viewmodel.ProductViewModel
 
+import com.example.myapplication.ui.components.BottomBar
+import androidx.compose.material3.Scaffold
 
 
 @Composable
-fun OrdersScreen(navController: NavController) {
+fun OrdersScreen(navController: NavHostController) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BgColor)
-    ) {
-
-        // 🔹 HEADER
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(PrimaryTeal)
-                .padding(vertical = 20.dp, horizontal = 15.dp)
-        ) {
-            Text(
-                text = "My Orders",
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold
+    Scaffold(
+        bottomBar = {
+            BottomBar(
+                bottomNavController = navController,
+                currentRoute = "orders",
+                role = "buyer"
             )
         }
+    ) { padding ->
 
-        // 🔹 EMPTY STATE
         Column(
             modifier = Modifier
+                .padding(padding)
                 .fillMaxSize()
-                .padding(top = 50.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .background(BgColor)
         ) {
 
-            Text(text = "📦", fontSize = 60.sp)
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(text = "No orders yet!", color = TextLight)
-
-            Spacer(modifier = Modifier.height(15.dp))
-
-            TextButton(
-                onClick = { navController.navigate("home") }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(PrimaryTeal)
+                    .padding(vertical = 20.dp, horizontal = 15.dp)
             ) {
                 Text(
-                    text = "Start Shopping",
-                    color = PrimaryTeal
+                    text = "My Orders",
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
                 )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 50.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Text("📦", fontSize = 60.sp)
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text("No orders yet!", color = TextLight)
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                TextButton(
+                    onClick = { navController.navigate("user_home") }
+                ) {
+                    Text(
+                        text = "Start Shopping",
+                        color = PrimaryTeal
+                    )
+                }
             }
         }
     }
 }
+
 
 @Composable
 fun AddProductScreen(

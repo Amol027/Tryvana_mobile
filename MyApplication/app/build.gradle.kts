@@ -83,6 +83,8 @@ dependencies {
 
     // Coil (Image loading ke liye - AsyncImage error fix karega)
     implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("androidx.compose.foundation:foundation")
+
 
     // --------------------------------------
 

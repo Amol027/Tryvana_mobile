@@ -18,6 +18,8 @@ import com.example.myapplication.ui.theme.BgColor
 import com.example.myapplication.ui.theme.PrimaryTeal
 import com.example.myapplication.ui.theme.TextDark
 import com.example.myapplication.ui.theme.TextLight
+import androidx.compose.material3.Scaffold
+import com.example.myapplication.ui.components.BottomBar
 
 
 
@@ -27,123 +29,79 @@ fun ProfileScreen(
     authViewModel: AuthViewModel
 ) {
 
-
     val name = authViewModel.loggedInUserName ?: "Guest User"
     val email = authViewModel.loggedInUserEmail ?: "guest@trywana.com"
 
-    Log.d("ProfileDebug", "ProfileScreen loaded - Name: $name, Email: $email")
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BgColor)
-    ) {
-
-        // ===== Header =====
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(PrimaryTeal)
-                .padding(vertical = 20.dp, horizontal = 15.dp)
-        ) {
-            Text(
-                "Profile",
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 20.sp
+    Scaffold(
+        bottomBar = {
+            BottomBar(
+                bottomNavController = navController,
+                currentRoute = "profile",
+                role = "buyer"
             )
         }
+    ) { padding ->
 
-        // ===== User Info Section =====
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(vertical = 30.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(padding)
+                .fillMaxSize()
+                .background(BgColor)
         ) {
 
             Box(
                 modifier = Modifier
-                    .size(80.dp)
-                    .background(Color(0xFFDDDDDD), CircleShape),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .background(PrimaryTeal)
+                    .padding(vertical = 20.dp, horizontal = 15.dp)
             ) {
+                Text(
+                    "Profile",
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 20.sp
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(vertical = 30.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
                 Text("👤", fontSize = 40.sp)
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Text(
+                    text = name,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 18.sp
+                )
+
+                Text(
+                    text = email,
+                    color = TextLight,
+                    fontSize = 14.sp
+                )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            Text(
-                text = name,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 18.sp,
-                color = TextDark
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Text(
-                text = email,
-                color = TextLight,
-                fontSize = 14.sp
-            )
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        val items = listOf(
-            "My Account",
-            "Address Book",
-            "Help Center"
-        )
-
-        items.forEach { item ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 6.dp),
-                shape = RoundedCornerShape(10.dp)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White)
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(item, color = TextDark)
-                    Text("❯", color = TextLight)
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        // ===== Logout =====
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 15.dp, vertical = 6.dp),
-            shape = RoundedCornerShape(10.dp)
-        ) {
             TextButton(
                 onClick = {
                     authViewModel.logout()
-
                     navController.navigate("role") {
-                        popUpTo(0) { inclusive = true }
-                        launchSingleTop = true
+                        popUpTo(0)
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    "Logout",
-                    color = Color.Red,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Text("Logout", color = Color.Red)
             }
         }
     }
 }
+

@@ -21,7 +21,6 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.viewmodel.ProductViewModel
 import com.example.myapplication.ui.components.BottomBar
-import com.example.myapplication.data.network.TokenManager
 
 private val PrimaryTeal = Color(0xFF008080)
 private val AccentCoral = Color(0xFFFF6F61)
@@ -248,7 +247,7 @@ fun ProductDetailScreen(
             modifier = Modifier.align(Alignment.BottomCenter)
         ) {
             BottomBar(
-                navController = navController,
+                bottomNavController = navController,
                 currentRoute = "detail/$productId",
                 role = "user"
             )

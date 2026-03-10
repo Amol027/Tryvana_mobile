@@ -11,70 +11,77 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.myapplication.ui.theme.*
+import androidx.navigation.NavHostController
+import androidx.compose.material3.Scaffold
+import com.example.myapplication.ui.components.BottomBar
+
 
 @Composable
-fun CategoriesScreen() {
+fun CategoriesScreen(navController: NavHostController) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BgColor)
-    ) {
-
-        // 🔹 HEADER (Exact HTML Style)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(PrimaryTeal)
-                .padding(vertical = 20.dp, horizontal = 15.dp)
-        ) {
-            Text(
-                text = "Categories",
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold
+    Scaffold(
+        bottomBar = {
+            BottomBar(
+                bottomNavController = navController,
+                currentRoute = "categories",
+                role = "buyer"
             )
         }
+    ) { padding ->
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .background(BgColor)
+        ) {
 
-        // 🔹 CATEGORY LIST
-        val categories = listOf(
-            "👕 Men's Fashion",
-            "👗 Women's Fashion",
-            "🧸 Kids Wear",
-            "🎧 Electronics",
-            "💄 Beauty"
-        )
-
-        categories.forEach { category ->
-
-            Card(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 8.dp),
-                shape = RoundedCornerShape(10.dp)
+                    .background(PrimaryTeal)
+                    .padding(vertical = 20.dp, horizontal = 15.dp)
             ) {
+                Text(
+                    text = "Categories",
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
 
-                Row(
+            Spacer(modifier = Modifier.height(10.dp))
+
+            val categories = listOf(
+                "👕 Men's Fashion",
+                "👗 Women's Fashion",
+                "🧸 Kids Wear",
+                "🎧 Electronics",
+                "💄 Beauty"
+            )
+
+            categories.forEach { category ->
+
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color.White)
-                        .padding(15.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 15.dp, vertical = 8.dp),
+                    shape = RoundedCornerShape(10.dp)
                 ) {
 
-                    Text(
-                        text = category,
-                        color = TextDark
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White)
+                            .padding(15.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
 
-                    Text(
-                        text = "❯",
-                        color = TextLight
-                    )
+                        Text(category, color = TextDark)
+                        Text("❯", color = TextLight)
+                    }
                 }
             }
         }
     }
 }
+
